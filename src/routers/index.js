@@ -5,6 +5,12 @@ import Vue from 'vue'
 
 // 导入登录页面login的路由  然后去实例中注册路由
 import Login from '@/views/login'
+// 导入首页home,然后注册
+import Home from '@/views/home'
+// 导入welcome,然后注册为二级路由
+import welcome from '@/views/welcome'
+// 引入404 然后注册
+import NotFound from '@/views/404'
 
 // 使用vue.use
 Vue.use(VueRouter)
@@ -16,7 +22,21 @@ const router = new VueRouter({
   routes: [{
     path: '/login',
     component: Login
-  }]
+  },
+  {
+    path: '/',
+    component: Home,
+    // 在home下边配置一个二级路由
+    children: [{
+      path: '',
+      component: welcome
+    }]
+  },
+  {
+    path: '*',
+    component: NotFound
+  }
+  ]
 })
 
 // 导出

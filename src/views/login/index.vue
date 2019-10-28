@@ -9,12 +9,12 @@
       <img src="../../assets/logo_index.png" alt />
       <!-- 静态4 表单控件 -->
       <el-form :model="loginForm" ref="loginForm" :rules="loginRules" status-icon>
-        <el-form-item prop="loginMobile">
-          <el-input v-model="loginForm.loginMobile" placeholder="请输入手机号"></el-input>
+        <el-form-item prop="mobile">
+          <el-input v-model="loginForm.mobile" placeholder="请输入手机号"></el-input>
         </el-form-item>
-        <el-form-item prop="loginCode">
+        <el-form-item prop="code">
           <el-input
-            v-model="loginForm.loginCode"
+            v-model="loginForm.code"
             placeholder="请输入验证码"
             style="width:240px; margin-right: 8px;"
           ></el-input>
@@ -32,6 +32,7 @@
 </template>
 
 <script>
+// 正则匹配手机号
 const mobileCode = (rule, value, callback) => {
   if (/^1[3-9]\d{9}$/.test(value)) {
     callback()
@@ -44,15 +45,16 @@ export default {
   data () {
     return {
       loginForm: {
-        loginMobile: '',
-        loginCode: ''
+        mobile: '',
+        code: ''
       },
       loginRules: {
-        loginMobile: [
+        mobile: [
           { required: true, message: '请输入手机号', trigger: 'blur' },
+          // 通过Element框架提供的属性设置输入框校验
           { validator: mobileCode, trigger: 'blur' }
         ],
-        loginCode: [
+        code: [
           { required: true, message: '请输入验证码', trigger: 'blur' },
           { len: 6, message: '请输入6位验证码', trigger: 'blur' }
         ]
@@ -71,8 +73,19 @@ export default {
       // 对整个表单进行校验
       this.$refs['loginForm'].validate(valid => {
         if (valid) {
-          // 校验成功  进行登录（发请求）
           console.log('ok')
+
+          // 校验成功  进行登录（发请求）
+          // 用axios发送请求.前面是路径,后面是提交的数据,用表单代替,请求结果在then中
+          this.$http
+            .post('authorizations', this.loginForm)
+            .then(res => {
+              this.$router.push('/')
+            })
+            .catch(() => {
+              // 否则跳转失败,给出提示信息
+              this.$message.error('手机号或验证码错误')
+            })
         }
       })
     }
