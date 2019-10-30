@@ -12,6 +12,12 @@ import welcome from '@/views/welcome'
 // 引入404 然后注册
 import NotFound from '@/views/404'
 
+// 引入local工具包 用于路由导航卫士
+import local from '@/utils/local'
+
+// 导入内容管理页 是二级路由 并注册
+import article from '@/views/article'
+
 // 使用vue.use
 Vue.use(VueRouter)
 
@@ -30,6 +36,9 @@ const router = new VueRouter({
     children: [{
       path: '',
       component: welcome
+    }, {
+      path: '/article',
+      component: article
     }]
   },
   {
@@ -37,6 +46,21 @@ const router = new VueRouter({
     component: NotFound
   }
   ]
+})
+
+// 登录页
+// router提供的路由导航守卫,属于前置的,在跳转页面前进行判断,符合条件跳转,不符合条件跳转到指定页面
+router.beforeEach((to, from, next) => {
+  // to 跳转目标路由对象
+  // from 从哪里跳过来的路由对象
+  // next() 放行  next('/login') 拦截到登录
+  // next()
+
+  // 声明变量接收获取用户信息的方法
+  const user = local.getUser()
+  // 如果你访问的不是登录页面，且又没有登录，跳转到登录页面。
+  if (to.path !== '/login' && !user) return next('/login')
+  next()
 })
 
 // 导出

@@ -10,8 +10,10 @@
       <!-- 整个菜单的容器 -->
       <!-- default-active="2" 当前激活菜单的 index   菜单项的index的值和default-active的值相等 当前菜单想被选中-->
       <!-- -给el-menu加上属性router按照index的值进行跳转 -->
+
+      <!--下边 :default-active="$route.path" 是首页导航栏跳转,实现跳转路径和路由的路径一样-->
       <el-menu
-        default-active="/"
+        :default-active="$route.path"
         background-color="#002033"
         text-color="#fff"
         active-text-color="#ffd04b"
@@ -59,15 +61,18 @@
         <span class="el-icon-s-fold fold" @click="toggleOpen"></span>
         <!-- 文字 -->
         <span class="text">江苏传智播客科技教育有限公司</span>
-        <el-dropdown class="dropdown_r">
+        <el-dropdown class="dropdown_r" @command="personage">
           <span class="el-dropdown-link">
-            <img src="../../assets/avatar.jpg" alt />
-            用户名
+            <!-- 将获取的photo和name给到元素上,以显示 -->
+            <img :src="photo" alt />
+            {{name}}
             <i class="el-icon-arrow-down el-icon--right"></i>
           </span>
+          <!-- 组件不能绑定事件,用ref有些繁琐,可以使用elementUI提供的command 指令快速的绑定-->
+          <!-- 需要在要绑定事件的元素的容器上绑定事件 @command="事件名" -->
           <el-dropdown-menu slot="dropdown">
-            <el-dropdown-item icon="el-icon-setting">个人中心</el-dropdown-item>
-            <el-dropdown-item icon="el-icon-unlock">退出登录</el-dropdown-item>
+            <el-dropdown-item icon="el-icon-setting" command="setting">个人中心</el-dropdown-item>
+            <el-dropdown-item icon="el-icon-unlock" command="logout">退出登录</el-dropdown-item>
           </el-dropdown-menu>
         </el-dropdown>
       </el-header>
@@ -79,18 +84,45 @@
 </template>
 
 <script>
+// 导入local
+import local from '@/utils/local'
+
 export default {
   data () {
     return {
       // 设置导航栏开关,设置默认为true开启状态
-      isOpen: true
+      isOpen: true,
+      // 设置用户头像
+      photo: '',
+      // 设置用户名称
+      name: ''
     }
   },
   methods: {
     toggleOpen () {
       // 设置isOpen状态
       this.isOpen = !this.isOpen
+    },
+    // 设置跳转到个人中心
+    setting () {
+      this.$router.push('/setting')
+    },
+    // 设置退出登录,跳转到登陆页面并清除用户信息
+    logout () {
+      local.delUser()
+      this.$router.push('/login')
+    },
+
+    // 个人信息和退出登录的事件  需要传参command来判断点击哪个事件
+    personage (command) {
+      this[command]()
     }
+  },
+  created () {
+    // 获取登录用户的头像和名称
+    const user = local.getUser()
+    this.photo = user.photo
+    this.name = user.name
   }
 }
 </script>
@@ -108,12 +140,12 @@ export default {
     .logo_top {
       width: 100%;
       height: 60px;
-      background: #002344 url("../../assets/logo_admin.png") no-repeat center /
+      background: #002344 url('../../assets/logo_admin.png') no-repeat center /
         140px auto;
     }
     // 用于覆盖大的log
     .smallLog {
-      background-image: url("../../assets/logo_admin_01.png");
+      background-image: url('../../assets/logo_admin_01.png');
       background-size: 36px auto;
     }
   }

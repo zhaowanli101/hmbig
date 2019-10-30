@@ -32,6 +32,9 @@
 </template>
 
 <script>
+// 引入用户登录信息 工具local
+import local from '@/utils/local.js'
+
 // 正则匹配手机号
 const mobileCode = (rule, value, callback) => {
   if (/^1[3-9]\d{9}$/.test(value)) {
@@ -45,8 +48,8 @@ export default {
   data () {
     return {
       loginForm: {
-        mobile: '',
-        code: ''
+        mobile: '13987654321',
+        code: '246810'
       },
       loginRules: {
         mobile: [
@@ -71,21 +74,38 @@ export default {
       //  获取 this.$refs['abc']
 
       // 对整个表单进行校验
-      this.$refs['loginForm'].validate(valid => {
+      this.$refs['loginForm'].validate(async valid => {
         if (valid) {
-          console.log('ok')
+          // console.log('ok')
 
           // 校验成功  进行登录（发请求）
           // 用axios发送请求.前面是路径,后面是提交的数据,用表单代替,请求结果在then中
-          this.$http
-            .post('authorizations', this.loginForm)
-            .then(res => {
-              this.$router.push('/')
-            })
-            .catch(() => {
-              // 否则跳转失败,给出提示信息
-              this.$message.error('手机号或验证码错误')
-            })
+          // this.$http.post('authorizations', this.loginForm).then(res => {
+          // 成功 res 是响应对象  res.data 是响应主体
+          // console.log(res.data.data)
+          // 保存token(用户信息) token会在res.data.data中
+          // local.setUser(res.data.data)
+          // this.$router.push('/')
+
+          // 用axios改造登录代码
+          // 以下代码可能出现异常（报错）  使用try{ 可能报错代码 }catch(e){ 处理错误 }
+          try {
+            // 将获取的数据结构赋值拿到data
+            const {
+              data: { data }
+            } = await this.$http.post('authorizations', this.loginForm)
+            // 将拿到的数据传参的给local中的
+            local.setUser(data)
+            this.$router.push('/')
+          } catch (e) {
+            this.$message.error('手机号或验证码错误')
+          }
+          // })
+          // .catch(() => {
+          // 否则跳转失败,给出提示信息
+          // this.$message.error('手机号或验证码错误')
+
+          // })
         }
       })
     }
@@ -105,7 +125,7 @@ export default {
   /* 背景图尺寸：拆分写法 background-size
   组合写法：background:..... / 背景图尺寸(width,height)
   特殊写法：cover  等比例缩放铺满容器多余不显示  contain 等比例缩放完全显示在容器内 */
-  background: url("../../assets/moshou1 (2).jpg") no-repeat center / cover;
+  background: url('../../assets/login_bg.jpg') no-repeat center / cover;
   .el-card {
     width: 400px;
     height: 350px;
