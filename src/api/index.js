@@ -1,8 +1,14 @@
+// 配置axios的文件
+
 // 进行axios接口的导入导出  提供给main.js使用
 import axios from 'axios'
 
 // 引入router
 import router from '@/routers'
+
+// 导入json-bigint第三方插件
+// 用于删除时候后台返回的id值过大时的ID值的转换
+import JsonBig from 'json-bigint'
 
 // 引入local用于操作拦截器,
 import local from '@/utils/local'
@@ -36,6 +42,16 @@ axios.interceptors.response.use(res => res, err => {
   }
   return Promise.reject(err)
 })
+
+axios.defaults.transformResponse = [(data) => {
+  // 后台的原始数据   理想情况 json字符串
+  // 后台可能没有任何响应内容  data 值是 null
+  try {
+    return JsonBig.parse(data)
+  } catch (e) {
+    return data
+  }
+}]
 
 // 导出axios
 export default axios
