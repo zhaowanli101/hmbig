@@ -4,6 +4,9 @@ import 'element-ui/lib/theme-chalk/index.css'
 import App from './App.vue'
 import axios from '@/api'
 
+// 导入全样式上传素材的样式
+import '@/styles/index.less'
+
 import MyBread from '@/components'
 // import MyBread from './components/my-bread.vue'
 // 导入vue-router

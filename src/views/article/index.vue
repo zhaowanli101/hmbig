@@ -19,15 +19,9 @@
           </el-radio-group>
         </el-form-item>
         <el-form-item label="频道：">
-          <!-- clearable是清空频道选项 -->
-          <el-select v-model="reqParams.channel_id" placeholder="请选择" clearable>
-            <el-option
-              v-for="item in channelOptions"
-              :key="item.id"
-              :label="item.name"
-              :value="item.id"
-            ></el-option>
-          </el-select>
+          <!-- 频道封装组件  并绑定相关事件 在子组件内接受数据,并传给父组件-->
+          <!-- v-model  第一 :value  第二  @input -->
+          <my-channel v-model="reqParams.channer_id"></my-channel>
         </el-form-item>
         <el-form-item label="日期：">
           <!-- v-model 绑定的值是[起始日期,结束日期] -->
@@ -140,7 +134,7 @@ export default {
       // 表格数据
       articleData: [],
       // 文章页数
-      page: 1,
+      // page: 1,
       // 提交后台的对象
       reqParams: {
         // 状态为空的时候不会进行提交
@@ -151,26 +145,26 @@ export default {
         begin_pubdate: null,
         end_pubdate: null
       },
-      channelOptions: [],
+      // channelOptions: [],
       // 定义总条数
       total: 0
     }
   },
   created () {
     // 获取频道列表方法的调用
-    this.getChannelOptions()
+    // this.getChannelOptions()
     // 获取文章列表方法的调用
     this.getArticles()
   },
   methods: {
     // 获取文章频道
-    async getChannelOptions () {
-      // 异步获取不用传值,解构赋值并赋值给channelOptions
-      const {
-        data: { data }
-      } = await this.$http.get('channels')
-      this.channelOptions = data.channels
-    },
+    // async getChannelOptions () {
+    //   // 异步获取不用传值,解构赋值并赋值给channelOptions
+    //   const {
+    //     data: { data }
+    //   } = await this.$http.get('channels')
+    //   this.channelOptions = data.channels
+    // },
     // 获取文章列表
     async getArticles () {
       // 将获取的数据对象解构赋值

@@ -17,6 +17,10 @@ import local from '@/utils/local'
 
 // 导入内容管理页 是二级路由 并注册
 import article from '@/views/article'
+// 导入素材管理组件并注册
+import Images from '@/views/image'
+// 导入publish发布文章组件
+import Publish from '@/views/publish'
 
 // 使用vue.use
 Vue.use(VueRouter)
@@ -39,6 +43,12 @@ const router = new VueRouter({
     }, {
       path: '/article',
       component: article
+    }, {
+      path: '/images',
+      component: Images
+    }, {
+      path: '/publish',
+      component: Publish
     }]
   },
   {
