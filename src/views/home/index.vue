@@ -86,6 +86,7 @@
 <script>
 // 导入local
 import local from '@/utils/local'
+import eventBus from '../../components/eventBus'
 
 export default {
   data () {
@@ -119,6 +120,15 @@ export default {
     }
   },
   created () {
+    // 更新home 用户名
+    eventBus.$on('updateName', name => {
+      this.name = name
+    })
+    // 更新home 头像
+    eventBus.$on('updatePhoto', photo => {
+      this.photo = photo
+    })
+
     // 获取登录用户的头像和名称
     const user = local.getUser()
     this.photo = user.photo
